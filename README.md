@@ -1,0 +1,3 @@
+- 👋 Hi, I’m @Jadedragon27
+- 👀 I’m interested in furthering my own education and getting a career in the gaming industry.
+- 🌱 I’m currently learning game design at Full Sail University.
