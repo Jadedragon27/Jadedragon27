@@ -1,0 +1,185 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DiagnosticGameManager : MonoBehaviour
+{
+    //TTT ARRAY ARRANGEMENT
+    //[0][1][2]
+    //[3][4][5]
+    //[6][7][8]
+
+    ///UNCOMMENT between ========== and fill out information accordingly
+    /// <summary>
+    /// GLOBAL SCOPE CLASS MEMBER VARIABLES
+    //	Project Name: SPECIFY
+    //	Date:	ENTERDATE
+    //	Links:	ENTERTUTORIAL USED (do not plagiarize any code)
+    /// </summary>
+    //==========
+
+    public int[] gridArray;//change VARIABLETYPE to correct type
+    public bool currentTurn = false;//change VARIABLETYPE to correct type
+    public int turnCounter = 0;
+    public GameObject[] gameObjectArray; //change VARIABLETYPE to correct type
+                                         //==========
+
+
+    //This function should be called each time a player enters a move
+    public bool checkWinFunction()
+    {
+        //THIS IS ONE RULE, complete the other rules and for the other player.
+        //	Remove true and /**/ comment codes and edit/modify VARUABLETYPE_PLAYER1VALUE to its correct value
+        if (gridArray[0] == 1 && gridArray[1] == 1 && gridArray[2] == 1)
+        {
+            Debug.Log("Player1 Top Row Win");
+            return true;
+        }
+        if (gridArray[0] == 2 && gridArray[1] == 2 && gridArray[2] == 2)
+        {
+            Debug.Log("Player2 Top Row Win");
+            return true;
+        }
+        if (gridArray[3] == 1 && gridArray[4] == 1 && gridArray[5] == 1)
+        {
+            Debug.Log("Player1 Middle Row Win");
+            return true;
+        }
+        if (gridArray[6] == 1 && gridArray[7] == 1 && gridArray[8] == 1)
+        {
+            Debug.Log("Player1 Bottom Row Win");
+            return true;
+        }
+        if (gridArray[0] == 1 && gridArray[3] == 1 && gridArray[6] == 1)
+        {
+            Debug.Log("Player1 Left Column Win");
+            return true;
+        }
+        if (gridArray[1] == 1 && gridArray[4] == 1 && gridArray[7] == 1)
+        {
+            Debug.Log("Player1 Middle Column Win");
+            return true;
+        }
+        if (gridArray[2] == 1 && gridArray[5] == 1 && gridArray[8] == 1)
+        {
+            Debug.Log("Player1 Right Column Win");
+            return true;
+        }
+        if (gridArray[0] == 1 && gridArray[4] == 1 && gridArray[8] == 1)
+        {
+            Debug.Log("Player1 Top Left to Bottom Right Diagonal Win");
+            return true;
+        }
+        if (gridArray[2] == 1 && gridArray[4] == 1 && gridArray[6] == 1)
+        {
+            Debug.Log("Player1 Top Right to Bottom Left Diagonal Win");
+            return true;
+        }
+        if (gridArray[3] == 2 && gridArray[4] == 2 && gridArray[5] == 2)
+        {
+            Debug.Log("Player2 Middle Row Win");
+            return true;
+        }
+        if (gridArray[6] == 2 && gridArray[7] == 2 && gridArray[8] == 2)
+        {
+            Debug.Log("Player2 Bottom Row Win");
+            return true;
+        }
+        if (gridArray[0] == 2 && gridArray[3] == 2 && gridArray[6] == 2)
+        {
+            Debug.Log("Player2 Left Column Win");
+            return true;
+        }
+        if (gridArray[1] == 2 && gridArray[4] == 2 && gridArray[7] == 2)
+        {
+            Debug.Log("Player2 Middle Column Win");
+            return true;
+        }
+        if (gridArray[2] == 2 && gridArray[5] == 2 && gridArray[8] == 2)
+        {
+            Debug.Log("Player2 Right Column Win");
+            return true;
+        }
+        if (gridArray[0] == 2 && gridArray[4] == 2 && gridArray[8] == 2)
+        {
+            Debug.Log("Player2 Top Left to Bottom Right Diagonal Win");
+            return true;
+        }
+        if (gridArray[2] == 2 && gridArray[4] == 2 && gridArray[6] == 2)
+        {
+            Debug.Log("Player2 Top Right to Bottom Left Diagonal Win");
+            return true;
+        }
+
+        return false;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        for (int i = 0; i < gameObjectArray.Length; i++)
+        {
+            gameObjectArray[i].GetComponent<DiagnosticButton>().init(gridArray[i]);
+        }
+
+    }
+
+    public void enterMove(int _index)
+    {
+
+        //THIS TESTS IF THE ARRAY'S SPACE/LOCATION HAS BEEN INTERACTED WITH BEFORE
+        //	IF so, which means that it isn't empty or default value, allow the array space as determined by the _index variable in line 49
+        //		to be set to the value that represents the first player or the second player respectively
+        //	Remove true and /**/ comment codes and edit/modify VARUABLETYPE_PLAYER1VALUE to its correct value
+
+        int turnSymbol = 0;
+
+        if (currentTurn == false)
+        {
+            turnSymbol = 1;
+            currentTurn = true;
+        }
+        else
+        {
+            turnSymbol = 2;
+            currentTurn = false;
+        }
+        //currentTurn = !currentTurn;
+        gridArray[_index] = turnSymbol;
+
+        //for the following lines, select the one you need and fits for your game;
+        //turnCounter = turnCounter + 0; 
+        //turnCounter += 0;
+        //turnCounter--;
+        //turnCounter += -1;
+        //turnCounter++;
+        turnCounter = turnCounter + 1;
+
+        bool checkIfPlayerWon = checkWinFunction();
+
+        if (checkIfPlayerWon == false && turnCounter >= 8)
+        {
+        	Debug.Log("Tie");
+        }
+
+        //SET TURN TO THE OTHER PLAYER'S TURNTYPE
+
+    }
+
+    //remove void and REPLACE VARIABLETYPE with correct datatype from currentTurn above
+    public bool getTurn()
+    {
+
+        return currentTurn;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            checkWinFunction();
+        }
+    }
+}
