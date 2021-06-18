@@ -1,0 +1,178 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class Game_Manager : MonoBehaviour
+{
+    // fields
+    string endText = "placeholder";
+    Color endTextColor = Color.magenta;
+    int score;
+    Text scoreText;
+    Text bricksText;
+    Text gameOverText;
+
+    // properties
+    public bool AppIsQuitting { get; private set; }
+    public bool IsPlaying { get; set; }
+    public static Game_Manager Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        int scale = 4;
+        Screen.SetResolution(224 * scale, 256 * scale, false);
+
+        //Project Settings > Time  > Fixed Timestep's default is 0.02 == 1 / 50
+        Time.fixedDeltaTime = 1 / 75f; // be faster/more accurate
+    }
+
+    // Update is called once per frame
+    /*void Update()
+    {
+        // TODO: disable once verified
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+        LoadScene("End");
+    }
+}*/
+
+    // SCENE MANAGEMENT
+
+    // https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager-sceneLoaded.html
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        IsPlaying = false;
+        AppIsQuitting = false;
+
+        UpdateUI();
+    }
+
+    public void LoadScene(string scene)
+    {
+        SceneManager.LoadScene(scene);
+    }
+
+    void NextScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+
+        // https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    // ENDING CONDITIONS
+
+    public void Win()
+    {
+        SetEndTextAndColor("You win!\nFinal score: " + score, Color.green);
+        NextScene();
+    }
+
+    public void Lose()
+    {
+        AppIsQuitting = true;
+        SetEndTextAndColor("You lose!", Color.red);
+        LoadScene("End");
+    }
+
+    //SCORE AND UI
+
+    void UpdateUI()
+    {
+        Text[] texts = FindObjectsOfType<Text>();
+
+        for (int i = 0; i < texts.Length; i++)
+        {
+            if (texts[i].name == "Score Text")
+            {
+                scoreText = texts[i];
+            }
+            else if (texts[i].name == "Bricks Text")
+            {
+                bricksText = texts[i];
+            }
+            else if (texts[i].name == "GameOver Text")
+            {
+                gameOverText = texts[i];
+            }
+        }
+
+        ShowScore();
+        ShowBrickCount();
+        ShowGameOver();
+    }
+
+    public void ModifyAndShowScore(int value)
+    {
+        score += value;
+        ShowScore();
+    }
+
+    void ShowScore()
+    {
+        if (scoreText)
+        {
+            scoreText.text = "Score: " + score;
+        }
+    }
+
+    public void ShowBrickCount()
+    {
+        if (bricksText)
+        {
+            bricksText.text = "Bricks: " + Brick.Count;
+        }
+    }
+
+    void SetEndTextAndColor(string value, Color color)
+    {
+        endText = value;
+        endTextColor = color;
+    }
+
+    void ShowGameOver()
+    {
+        if (gameOverText)
+        {
+            gameOverText.text = endText;
+            gameOverText.color = endTextColor;
+        }
+    }
+
+    // APP MANAGEMENT
+
+    private void OnApplicationQuit()
+    {
+        AppIsQuitting = true;
+    }
+}
