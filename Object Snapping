@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AR_ObjSnapping : MonoBehaviour
+{
+    //Game Object for the static object mesh to be "snapped" in place
+    public GameObject staticObj;
+
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (staticObj.activeInHierarchy == false)
+        {
+            if (other.GetComponent<AR_Snap>() != null)
+            {
+                Destroy(other.gameObject);
+
+                staticObj.SetActive(true);
+
+                SCRAPS_MessageSystem.instance.NewMessage("Scrapper", "I snapped a plank in place!", SCRAPS_MessageSystem.msgType.standard);
+
+                gameObject.SetActive(false);
+            }
+        }
+    }
+}
